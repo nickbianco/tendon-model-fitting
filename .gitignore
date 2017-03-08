@@ -1,0 +1,12 @@
+# Python
+*.pyc
+/build
+/dist
+/osimpipeline.egg-info
+
+# Vim
+.*.swo
+.*.swp
+
+# MATLAB
+*.asv
