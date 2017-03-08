@@ -1,0 +1,2 @@
+pathToHopper = 'C:\Users\Nick\repos\opensim\opensim-core\Bindings\Java\Matlab\Hopper_Device';
+addpath(

@@ -1,0 +1,1 @@
+[eToe,fToe,kToe,kLin] = bestFitThelen(lmda,F_tilde,X,Y)
