@@ -362,7 +362,7 @@
 						</PathWrapSet>
 					</GeometryPath>
 					<!--Maximum isometric force that the fibers can generate-->
-					<max_isometric_force>4000</max_isometric_force>
+					<max_isometric_force>9000</max_isometric_force>
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.55000000000000004</optimal_fiber_length>
 					<!--Resting length of the tendon-->
@@ -397,7 +397,14 @@
 					</FiberForceLengthCurve>
 					<!--Tendon-force-length curve.-->
 					<TendonForceLengthCurve>
-						<!--All properties of this object have their default values.-->
+						<!--Tendon strain at a tension of 1 normalized force-->
+						<strain_at_one_norm_force>0.049000000000000002</strain_at_one_norm_force>
+						<!--Tendon stiffness at a tension of 1 normalized force-->
+						<stiffness_at_one_norm_force>28.100000000000001</stiffness_at_one_norm_force>
+						<!--Normalized force developed at the end of the toe region-->
+						<norm_force_at_toe_end>0.67000000000000004</norm_force_at_toe_end>
+						<!--Tendon curve bend, from linear (0) to maximum bend (1)-->
+						<curviness>0.5</curviness>
 					</TendonForceLengthCurve>
 				</Millard2012EquilibriumMuscle>
 			</objects>

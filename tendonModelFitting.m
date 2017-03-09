@@ -1,82 +1,108 @@
 datapath = 'C:\Users\Nick\Documents\Courses\Mechanics of Biological Tissues\Final Project\tendon-model-fitting\data';
 resultspath = 'C:\Users\Nick\Documents\Courses\Mechanics of Biological Tissues\Final Project\tendon-model-fitting\results';
 
+% Original sample numbers from instron tests
+results.control.S1.number = 'Sample 18';
+results.control.S2.number = 'empty';
+results.control.S3.number = 'empty';
+results.static.S1.number = 'Sample 14';
+results.static.S2.number = 'empty';
+results.static.S3.number = 'empty';
+results.dynamic.S1.number = 'Sample 17';
+results.dynamic.S2.number = 'empty';
+results.dynamic.S3.number = 'empty';
+
+% Set conditions, samples, and strain rates
+% conditions = { {'control',{'S1'}} , ...
+%                {'static' ,{'S1'}}      , ...
+conditions = { {'dynamic',{'S1'}} };
+test = {'low','high'};
+
 % Create data and results structs
 sdat = sampledata(datapath);
-data = ramp(datapath);
+data = ramp(datapath,conditions);
 results = struct();
+
+save(fullfile(resultspath,'sampledata.mat'),'sdat')
+save(fullfile(resultspath,'trialdata.mat'),'data')
+
+try load(fullfile(resultspath,'results.mat'))
+catch ME
+    control = struct();
+    save(fullfile(resultspath,'results.mat'),'control')
+end
 
 % Set max isometric force
 Fmax = 75;
 
-% Set conditions, samples, and strain rates
-cond = {'control'};
-sample = {'S1'}; 
-test = {'low'};
-
-for c = 1:length(cond)
+for c = 1:length(conditions)
+    cond = conditions{c}{1};
+    sample = conditions{c}{2};
     for s = 1:length(sample)
         for t = 1:length(test)
             
             % Sample data
-            lo = sdat.(cond{c}).(sample{s}).lo;
-            A = sdat.(cond{c}).(sample{s}).Aell;
+            lo = sdat.(cond).(sample{s}).lo;
+            A = sdat.(cond).(sample{s}).Aell;
             
             % Trial data
-            l = data.(cond{c}).(sample{s}).(test).ext;
-            F = data.(cond{c}).(sample{s}).(test).load;
+            l = data.(cond).(sample{s}).(test{t}).ext;
+            F = data.(cond).(sample{s}).(test{t}).load;
             
+            % Recover tendon slack length estimation
+            if ~strcmp(cond,'control') && strcmp(test{t},'low')
+                results.(cond).(sample{s}).(test{t}).lTs_est = l(1);
+            end
+              
             % Tendon measurements to fit
+            l = l-l(1);
             lmda = (l/lo)+1;   % strain
             F_tilde = F/Fmax;  % normalized force
             T = F/A;           % Piola stress
             
-            % Recover tendon slack length estimation
-            if strcmp(test{t},'high')
-                tendonSlackLength = l(1);
-                results.(cond{c}).(sample{s}).(test).lTs = tendonSlackLength;
-                l = l-tendonSlackLength;
-            end
+            results.(cond).(sample{s}).(test{t}).lmda = lmda;
+            results.(cond).(sample{s}).(test{t}).F_tilde = F_tilde;
+            results.(cond).(sample{s}).(test{t}).T = T;
             
             figure
             plot(lmda,F_tilde)
-            title([cond{c} ' / ' sample{s} ' / ' test{t}])
-            text(1.002,1.1,'Select two points (Millard/Thelen models): ')
-            text(1.002,1.05,'  1) Curve intersection at one normalized force')
-            text(1.002,1.0,'  2) Curve intersection at toe region end')
+            title([cond ' / ' sample{s} ' / ' test{t}])
+            text(1.002,max(F_tilde)-0.1,'Select two points (Millard/Thelen models): ')
+            text(1.002,max(F_tilde)-0.167,'  1) Curve intersection at one normalized force')
+            text(1.002,max(F_tilde)-0.23,'  2) Curve intersection at toe region end')
             [X,Y] = ginput(2);
             
             % Millard tendon model fitting
             [eIso,kIso,fToe,curviness,F_tilde_fit] = bestFitMillard(lmda,F_tilde,X,Y);
-            results.(cond{c}).(sample{s}).(test).Millard.eIso = eIso;
-            results.(cond{c}).(sample{s}).(test).Millard.kIso = kIso;
-            results.(cond{c}).(sample{s}).(test).Millard.fToe = fToe;
-            results.(cond{c}).(sample{s}).(test).Millard.curviness = curviness;
+            results.(cond).(sample{s}).(test{t}).Millard.eIso = eIso;
+            results.(cond).(sample{s}).(test{t}).Millard.kIso = kIso;
+            results.(cond).(sample{s}).(test{t}).Millard.fToe = fToe;
+            results.(cond).(sample{s}).(test{t}).Millard.curviness = curviness;
             
             % Thelen tendon model fitting TODO
             % [eToe,fToe,kToe,kLin] = bestFitThelen(lmda,F_tilde,X,Y)
-            % results.(cond{c}).(sample{s}).(test).Thelen.eToe = eToe
-            % results.(cond{c}).(sample{s}).(test).Thelen.fToe = fToe
-            % results.(cond{c}).(sample{s}).(test).Thelen.kToe = kToe
-            % results.(cond{c}).(sample{s}).(test).Thelen.kLin = kLin
+            % results.(cond).(sample{s}).(test{t}).Thelen.eToe = eToe
+            % results.(cond).(sample{s}).(test{t}).Thelen.fToe = fToe
+            % results.(cond).(sample{s}).(test{t}).Thelen.kToe = kToe
+            % results.(cond).(sample{s}).(test{t}).Thelen.kLin = kLin
             
             % HW2 tendon model fitting
-            [alpha,beta,Etan0,Etan20] = bestFitHW2(lmda,T);
-            results.(cond{c}).(sample{s}).(test).HW2.alpha = alpha;
-            results.(cond{c}).(sample{s}).(test).HW2.beta = beta;
-            results.(cond{c}).(sample{s}).(test).HW2.Etan0 = Etan0;
-            results.(cond{c}).(sample{s}).(test).HW2.Etan20 = Etan20;
+            [alpha,beta,Etan0,Etan20,T_fit] = bestFitHW2(lmda,T);
+            results.(cond).(sample{s}).(test{t}).HW2.alpha = alpha;
+            results.(cond).(sample{s}).(test{t}).HW2.beta = beta;
+            results.(cond).(sample{s}).(test{t}).HW2.Etan0 = Etan0;
+            results.(cond).(sample{s}).(test{t}).HW2.Etan20 = Etan20;
             
+            hold on
+            plot(lmda,F_tilde_fit)
             
+            figure
+            plot(lmda,T)
+            hold on
+            plot(lmda,T_fit)
             
-%             hold on
-%             plot(lmda,F_tilde_fit)
-%             legend('data','fit')
-            
+            save(fullfile(resultspath,'results.mat'),'-append','-struct','results') %,cond,sample{s},test{t})
         end
     end
 end
-
-save(fullfile(resultspath,'results.mat'),'results')
-generateResults(results)
 

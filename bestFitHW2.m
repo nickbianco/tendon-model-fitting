@@ -1,4 +1,4 @@
-function [alpha,beta,Etan0,Etan20] = bestFitHW2(lmda,T)
+function [alpha,beta,Etan0,Etan20,T_fit] = bestFitHW2(lmda,T)
 
 p_init = [0.1 0.1];
 p_fit = fminsearch(@(p) costfun(p,@model,lmda,T),p_init);
@@ -7,6 +7,8 @@ alpha = p_fit(1);
 beta = p_fit(2);
 Etan0 = tanmod(alpha,beta,1);
 Etan20 = tanmod(alpha,beta,1.2);
+
+T_fit = model(p_fit,lmda);
 
 end
 
