@@ -1,4 +1,9 @@
+function plotSimulationResults
+
 boxpath = 'C:\Users\Nick\Box Sync\tendon-model-fitting\results';
+
+data = load('sim_results.mat');
+sim_results = data.sim_results;
 
 conditions = { {'control',{'S1'}} , ...
     {'static' ,{'S1'}} , ...
@@ -17,78 +22,31 @@ figure; fig_tendon_force = gcf;
 for c = 1:length(conditions)
     cond = conditions{c}{1};
     sample = conditions{c}{2};
+    
+    %height = zeros(501,length(test),length(sample));
     for s = 1:length(sample)
         for t = 1:length(test)
             
             time = sim_results.(cond).(sample{s}).(test{t}).outputs.time(:,1);
             
-            height(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.height(:,1);
-            fiber_length(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.fiber_length(:,1);
-            tendon_length(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_length(:,1);
-            tendon_stiffness(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_stiffness(:,1);
-            fiber_velocity(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.fiber_velocity(:,1);
-            active_fiber_force(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.active_fiber_force(:,1);
-            tendon_force(:,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_force(:,1);
-
+            height(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.height(:,1);
+            fiber_length(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.fiber_length(:,1);
+            tendon_length(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_length(:,1);
+            tendon_stiffness(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_stiffness(:,1);
+            fiber_velocity(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.fiber_velocity(:,1);
+            active_fiber_force(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.active_fiber_force(:,1);
+            tendon_force(:,t,s) = sim_results.(cond).(sample{s}).(test{t}).outputs.tendon_force(:,1);
+            
         end
         
-        % Hopper height
-        figure(fig_height)
-        plot(time,mean(height,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Height (m)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Fiber length
-        figure(fig_fiber_length)
-        plot(time,mean(fiber_length,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Fiber length (m)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Tendon length
-        figure(fig_tendon_length)
-        plot(time,mean(tendon_length,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Tendon length (m)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Tendon stiffness
-        figure(fig_tendon_stiffness)
-        plot(time,mean(tendon_stiffness,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Tendon stiffness (N/m)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Active fiber force
-        figure(fig_active_fiber_force)
-        plot(time,mean(active_fiber_force,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Active fiber force (N)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Tendon force
-        figure(fig_tendon_force)
-        plot(time,mean(tendon_force,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Tendon force (N)')
-        legend('control','static','dynamic','Location','best')
-        
-        % Fiber velocity
-        figure(fig_fiber_velocity)
-        plot(time,mean(fiber_velocity,2))
-        hold on
-        xlabel('Time (s)')
-        ylabel('Fiber velocity (m/s)')
-        legend('control','static','dynamic','Location','best')
-        
     end
+    
+    plotFun(fig_height,time,height,'Height (s)')
+    plotFun(fig_fiber_length,time,fiber_length,'Fiber Length (m)')
+    plotFun(fig_tendon_length,time,tendon_length,'Tendon Length (m)')
+    plotFun(fig_tendon_stiffness,time,tendon_stiffness,'Tendon Stiffness (N/m)')
+    plotFun(fig_active_fiber_force,time,active_fiber_force,'Active Fiber Force (N)')
+    plotFun(fig_tendon_force,time,tendon_force,'Tendon Force (N)')
 end
 
 print(fig_height,fullfile(boxpath,'height'),'-djpeg')
@@ -97,3 +55,28 @@ print(fig_tendon_length,fullfile(boxpath,'tendon_length'),'-djpeg')
 print(fig_tendon_stiffness,fullfile(boxpath,'fiber_velocity'),'-djpeg')
 print(fig_active_fiber_force,fullfile(boxpath,'active_fiber_force'),'-djpeg')
 print(fig_tendon_force,fullfile(boxpath,'tendon_force'),'-djpeg')
+
+end
+
+function plotFun(fig_h,time,value,y_label)
+
+figure(fig_h)
+
+subplot(1,2,1)
+plot(time,mean(value(:,1,:),3))
+title('Low Strain Rate')
+hold on
+xlabel('Time (s)')
+ylabel(y_label)
+
+subplot(1,2,2)
+plot(time,mean(value(:,2,:),3))
+title('High Strain Rate')
+hold on
+xlabel('Time (s)')
+ylabel(y_label)
+legend('control','static','dynamic','Location','best')
+
+
+
+end
