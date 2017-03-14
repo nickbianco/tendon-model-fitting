@@ -25,6 +25,9 @@
 
 function [results] = runHopper(varargin)
 
+resultspath = 'C:\Users\Nick\Documents\Courses\Mechanics of Biological Tissues\Final Project\tendon-model-fitting\results';
+boxpath = 'C:\Users\Nick\Box Sync\tendon-model-fitting';
+
 p = inputParser();
 
 defaultHopper = BuildHopper();
@@ -111,7 +114,9 @@ Simulate(hopper, sHop, enableVisualizer);
 table = reporter.getTable();
 disp(table.toString());
 csv = CSVFileAdapter();
-csv.write(table, 'hopper_results.csv');
+
+csv.write(table,fullfile(resultspath,'hopper_results.csv'));
+csv.write(table,fullfile(boxpath,'results','hopper_results.csv'));
   
 % Convert the TableReporter's Table to a MATLAB struct and plot the
 % the hopper's height over the motion.

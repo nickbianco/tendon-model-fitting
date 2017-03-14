@@ -1,5 +1,7 @@
 function [sdat] = sampledata(datapath)
 
+boxpath = 'C:\Users\Nick\Box Sync\tendon-model-fitting';
+
 sdat = struct;
 sampdata = xlsread(fullfile(datapath,'sampledata.xlsx'));
 
@@ -28,4 +30,7 @@ for c = 1:length(cond)
     
 end
 
+save(fullfile(datapath,'sampledata.mat'),'sdat')
+
 end
+

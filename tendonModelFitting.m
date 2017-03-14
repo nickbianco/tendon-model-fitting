@@ -1,21 +1,23 @@
 datapath = 'C:\Users\Nick\Documents\Courses\Mechanics of Biological Tissues\Final Project\tendon-model-fitting\data';
 resultspath = 'C:\Users\Nick\Documents\Courses\Mechanics of Biological Tissues\Final Project\tendon-model-fitting\results';
+boxpath = 'C:\Users\Nick\Box Sync\tendon-model-fitting';
 
 % Original sample numbers from instron tests
-results.control.S1.number = 'Sample 18';
-results.control.S2.number = 'empty';
-results.control.S3.number = 'empty';
-results.static.S1.number = 'Sample 14';
-results.static.S2.number = 'empty';
-results.static.S3.number = 'empty';
-results.dynamic.S1.number = 'Sample 17';
-results.dynamic.S2.number = 'empty';
-results.dynamic.S3.number = 'empty';
+mapping = struct();
+mapping.control.S1 = 'Sample 18';
+mapping.control.S2 = 'empty';
+mapping.control.S3 = 'empty';
+mapping.static.S1 = 'Sample 14';
+mapping.static.S2 = 'empty';
+mapping.static.S3 = 'empty';
+mapping.dynamic.S1 = 'Sample 17';
+mapping.dynamic.S2 = 'empty';
+mapping.dynamic.S3 = 'empty';
 
 % Set conditions, samples, and strain rates
-% conditions = { {'control',{'S1'}} , ...
-%                {'static' ,{'S1'}}      , ...
-conditions = { {'dynamic',{'S1'}} };
+conditions = { ...%{'control',{'S1'}} , ...
+               {'static' ,{'S1'}}};% , ...
+               %{'dynamic',{'S1'}} };
 test = {'low','high'};
 
 % Create data and results structs
@@ -23,15 +25,14 @@ sdat = sampledata(datapath);
 data = ramp(datapath,conditions);
 results = struct();
 
-save(fullfile(resultspath,'sampledata.mat'),'sdat')
-save(fullfile(resultspath,'trialdata.mat'),'data')
+save(fullfile(boxpath,'data','sampledata.mat'),'sdat')
+save(fullfile(boxpath,'data','trialdata.mat'),'data')
 
 try load(fullfile(resultspath,'results.mat'))
 catch ME
     control = struct();
     save(fullfile(resultspath,'results.mat'),'control')
 end
-
 % Set max isometric force
 Fmax = 75;
 
@@ -40,6 +41,8 @@ for c = 1:length(conditions)
     sample = conditions{c}{2};
     for s = 1:length(sample)
         for t = 1:length(test)
+            
+            results.(cond).(sample{s}).mapping = mapping.(cond).(sample{s});
             
             % Sample data
             lo = sdat.(cond).(sample{s}).lo;
@@ -51,7 +54,7 @@ for c = 1:length(conditions)
             
             % Recover tendon slack length estimation
             if ~strcmp(cond,'control') && strcmp(test{t},'low')
-                results.(cond).(sample{s}).(test{t}).lTs_est = l(1);
+                results.(cond).(sample{s}).lTs_est = l(1);
             end
               
             % Tendon measurements to fit
@@ -102,6 +105,7 @@ for c = 1:length(conditions)
             plot(lmda,T_fit)
             
             save(fullfile(resultspath,'results.mat'),'-append','-struct','results') %,cond,sample{s},test{t})
+            save(fullfile(boxpath,'results','results.mat'),'-append','-struct','results')
         end
     end
 end

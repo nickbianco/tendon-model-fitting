@@ -39,7 +39,6 @@ for c = 1:length(conditions)
     end
 end
 
-
-
+save(fullfile(datapath,'trialdata.mat'),'data')
 
 end
