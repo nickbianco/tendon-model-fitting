@@ -2,7 +2,7 @@ Strain : Tensile strain (Extension) gauge length,100,mm,,,,
 ,,,,,,
 Time,Extension,Load,,,,
 (s),(mm),(N),Low Start,Low End,High Start,High End
-0,0,0.31088,854,1245,1309,1399
+0,0,0.31088,854,1141,1309,1399
 0.1,0.00937,0.34447,,,,
 0.2,0.04464,0.46735,,,,
 0.3,0.07641,0.60344,,,,

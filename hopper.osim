@@ -366,7 +366,7 @@
 					<!--Optimal length of the muscle fibers-->
 					<optimal_fiber_length>0.55000000000000004</optimal_fiber_length>
 					<!--Resting length of the tendon-->
-					<tendon_slack_length>0.25440621986499518</tendon_slack_length>
+					<tendon_slack_length>0.25536522911051213</tendon_slack_length>
 					<!--Angle between tendon and fibers at optimal fiber length expressed in radians-->
 					<pennation_angle_at_optimal>0</pennation_angle_at_optimal>
 					<!--Activation lower bound.-->
@@ -398,13 +398,13 @@
 					<!--Tendon-force-length curve.-->
 					<TendonForceLengthCurve>
 						<!--Tendon strain at a tension of 1 normalized force-->
-						<strain_at_one_norm_force>0.046351261199470875</strain_at_one_norm_force>
+						<strain_at_one_norm_force>0.042529008724096852</strain_at_one_norm_force>
 						<!--Tendon stiffness at a tension of 1 normalized force-->
-						<stiffness_at_one_norm_force>28.886498877239291</stiffness_at_one_norm_force>
+						<stiffness_at_one_norm_force>29.038655930281749</stiffness_at_one_norm_force>
 						<!--Normalized force developed at the end of the toe region-->
-						<norm_force_at_toe_end>0.58676004741805876</norm_force_at_toe_end>
+						<norm_force_at_toe_end>0.54455916422774575</norm_force_at_toe_end>
 						<!--Tendon curve bend, from linear (0) to maximum bend (1)-->
-						<curviness>0.11995611955638819</curviness>
+						<curviness>0.0035824447648535873</curviness>
 					</TendonForceLengthCurve>
 				</Millard2012EquilibriumMuscle>
 			</objects>

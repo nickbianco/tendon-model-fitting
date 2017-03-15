@@ -5,19 +5,19 @@ boxpath = 'C:\Users\Nick\Box Sync\tendon-model-fitting';
 % Original sample numbers from instron tests
 mapping = struct();
 mapping.control.S1 = 'Sample 18';
-mapping.control.S2 = 'empty';
-mapping.control.S3 = 'empty';
+mapping.control.S2 = 'Sample 22';
+mapping.control.S3 = 'Sample 26';
 mapping.static.S1 = 'Sample 14';
-mapping.static.S2 = 'empty';
-mapping.static.S3 = 'empty';
+mapping.static.S2 = 'Sample 19';
+mapping.static.S3 = 'Sample 24';
 mapping.dynamic.S1 = 'Sample 17';
-mapping.dynamic.S2 = 'empty';
-mapping.dynamic.S3 = 'empty';
+mapping.dynamic.S2 = 'Sample 21';
+mapping.dynamic.S3 = 'Sample 25';
 
 % Set conditions, samples, and strain rates
-conditions = { ...%{'control',{'S1'}} , ...
-               {'static' ,{'S1'}}};% , ...
-               %{'dynamic',{'S1'}} };
+conditions = { {'control',{'S1','S2','S3'}} , ...
+               {'static' ,{'S1','S2','S3'}} , ...
+               {'dynamic',{'S1','S2','S3'}} };
 test = {'low','high'};
 
 % Create data and results structs
@@ -33,8 +33,9 @@ catch ME
     control = struct();
     save(fullfile(resultspath,'results.mat'),'control')
 end
+
 % Set max isometric force
-Fmax = 75;
+Fmax = 60; % N
 
 for c = 1:length(conditions)
     cond = conditions{c}{1};
